@@ -304,6 +304,11 @@ public class Main {
             StringJoiner sj = new StringJoiner(" | ");
             l.forEach((k, x) -> { if (!k.equals("senha")) sj.add(k + "=" + x); });
             System.out.println(sj);
+
+            
+
+
+
         }
     }
 }

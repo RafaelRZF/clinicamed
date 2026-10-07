@@ -13,21 +13,39 @@ public class Auth {
             StringBuilder sb = new StringBuilder();
             for (byte x : b) sb.append(String.format("%02x", x));
             return sb.toString();
-        } catch (Exception e) { throw new RuntimeException(e); }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    public static String digitos(String s) { return s == null ? "" : s.replaceAll("\\D", ""); }
+    public static String digitos(String s) {
+        return s == null ? "" : s.replaceAll("\\D", "");
+    }
 
-    /** perfil: PACIENTE, MEDICO ou FUNCIONARIO. Retorna null se login/senha não conferem. */
+    /**
+     * perfil: PACIENTE, MEDICO ou FUNCIONARIO. Retorna null se login/senha não conferem.
+     */
     public static Sessao autenticar(String perfil, String identificador, String senha) throws SQLException {
         String tabela, pk, cond, valor;
         switch (perfil) {
-            case "PACIENTE" -> { tabela = "pacientes"; pk = "id_pacientes";
-                cond = "REPLACE(REPLACE(cpf,'.',''),'-','')=?"; valor = digitos(identificador); }
-            case "MEDICO" -> { tabela = "medicos"; pk = "id_medicos";
-                cond = "UPPER(crm)=UPPER(?)"; valor = identificador.trim(); }
-            default -> { tabela = "funcionarios"; pk = "id_funcionarios";
-                cond = "REPLACE(REPLACE(cpf,'.',''),'-','')=?"; valor = digitos(identificador); }
+            case "PACIENTE" -> {
+                tabela = "pacientes";
+                pk = "id_pacientes";
+                cond = "REPLACE(REPLACE(cpf,'.',''),'-','')=?";
+                valor = digitos(identificador);
+            }
+            case "MEDICO" -> {
+                tabela = "medicos";
+                pk = "id_medicos";
+                cond = "UPPER(crm)=UPPER(?)";
+                valor = identificador.trim();
+            }
+            default -> {
+                tabela = "funcionarios";
+                pk = "id_funcionarios";
+                cond = "REPLACE(REPLACE(cpf,'.',''),'-','')=?";
+                valor = digitos(identificador);
+            }
         }
         String sql = "SELECT " + pk + ", nome FROM " + tabela + " WHERE " + cond + " AND senha=?";
         try (Connection c = Conexao.get(); PreparedStatement p = c.prepareStatement(sql)) {
